@@ -1,0 +1,16 @@
+services:
+
+  authentication-service-database:
+    image: postgres:latest
+    container_name: database-authentication-service
+    environment:
+      - POSTGRES_USER=developer
+      - POSTGRES_DB=authentication
+      - POSTGRES_PASSWORD=Developer123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - authentication-service-database-volume:/var/lib/postgresql/data/
+
+volumes:
+  authentication-service-database-volume:
