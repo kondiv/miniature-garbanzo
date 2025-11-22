@@ -2,6 +2,7 @@
 using Ardalis.Result;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace AuthenticationService.App.Controllers;
 
@@ -20,13 +21,22 @@ public sealed class AuthenticationController(IMediator mediator) : ControllerBas
 
         if (registrationResult.IsSuccess)
         {
-            return Ok(registrationResult);
+            return Ok(registrationResult.Value);
         }
 
         return registrationResult.Status switch
         {
-            ResultStatus.Conflict => Conflict(),
-
+            ResultStatus.Conflict => Problem(
+                type: "Conflict",
+                title: "Registration Failure",
+                detail: string.Join(',', registrationResult.Errors),
+                statusCode: StatusCodes.Status409Conflict
+                ),
+            _ => Problem(
+                type: "Bad Request",
+                title: "Registration Failure",
+                detail: string.Join(',', registrationResult.Errors),
+                statusCode: StatusCodes.Status400BadRequest)
         };
     }
 }

@@ -24,7 +24,7 @@ internal sealed class RegisterUserCommandHandler(
 
         bool isEmailUnique = !await context
             .Users
-            .AnyAsync(u => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            .AnyAsync(u => EF.Functions.ILike(u.Email, request.Email), cancellationToken);
 
         if(!isEmailUnique)
         {
@@ -34,7 +34,7 @@ internal sealed class RegisterUserCommandHandler(
 
         var role = await context
             .Roles
-            .FirstOrDefaultAsync(r => r.Name.Equals(request.Role, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            .FirstOrDefaultAsync(r => EF.Functions.ILike(r.Name, request.Role), cancellationToken);
 
         if(role is null)
         {
